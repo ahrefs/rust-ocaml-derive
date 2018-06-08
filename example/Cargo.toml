@@ -1,0 +1,11 @@
+[package]
+name = "example"
+version = "0.1.0"
+authors = ["joris giovannangeli <joris.giovannangeli@ahrefs.com>"]
+
+[dependencies]
+derive-ocaml = { path = "..", features= ["stubs", "derive"] }
+ocaml = "*"
+
+[lib]
+crate-type = ["staticlib"]

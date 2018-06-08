@@ -1,0 +1,15 @@
+(jbuild_version 1)
+
+(library
+  (
+   (name stubs)
+   (modules (stubs))
+   (c_library_flags         (-L../../../target/release -lexample -lpthread -lc -lm))
+   ))
+
+(executable
+  (
+   (name main)
+   (modules (main))
+   (libraries (stubs))
+   ))

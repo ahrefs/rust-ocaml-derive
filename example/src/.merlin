@@ -1,0 +1,4 @@
+B _build/default/.main.eobjs
+B _build/default/.stubs.objs
+FLG -w -40 -w -40
+S .
