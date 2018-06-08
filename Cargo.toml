@@ -1,0 +1,22 @@
+[package]
+name = "derive-ocaml"
+version = "0.1.0"
+authors = ["joris giovannangeli <joris.giovannangeli@ahrefs.com>"]
+
+[lib]
+proc-macro = true
+
+[features]
+default = [ "derive" ]
+
+# Implement custom derive for FromValue/ToValue ocaml traits
+derive = [ "synstructure" ]
+
+# Extperimental nightly only #[ocaml] proc_macro to generate all glue for a stub
+stubs = ["syn/full"]
+
+[dependencies]
+synstructure = { version = "0.9", optional = true }
+syn = "0.14"
+quote = "0.6"
+proc-macro2 = "0.4"
