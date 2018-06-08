@@ -2,6 +2,10 @@
 name = "derive-ocaml"
 version = "0.1.0"
 authors = ["joris giovannangeli <joris.giovannangeli@ahrefs.com>"]
+license = "MIT"
+description = """
+Custom derive and procedural macros for easy FFI with ocaml on top of the ocaml crate
+"""
 
 [lib]
 proc-macro = true
