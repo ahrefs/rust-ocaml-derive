@@ -116,7 +116,7 @@ pub fn ocaml(_attribute: TokenStream, function: TokenStream) -> TokenStream {
     } else {
         quote!(
             #rust_code
-            caml_body!{ | #(#params), * |, {
+            caml_body!{ | #(#params), * |, @code {
                 internal(#(#arguments),*);
             }};
             return
