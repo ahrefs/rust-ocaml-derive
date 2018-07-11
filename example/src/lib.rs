@@ -29,7 +29,7 @@ pub fn rust_add_vecs(l: Vec3, r: Vec3) -> Vec3 {
     l + r
 }
 
-#[derive(FromValue)]
+#[derive(FromValue, ToValue)]
 pub enum Unrolled<Item> {
     Empty,
     One(Item),
