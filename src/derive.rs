@@ -191,8 +191,8 @@ pub fn fromvalue_derive(s: synstructure::Structure) -> proc_macro2::TokenStream 
             gen impl ocaml::FromValue for @Self {
                 fn from_value(value: ocaml::Value) -> Self {
                     let is_block = value.is_block();
-                    let tag = if is_block { value.i32_val() as u8 } else { #tag };
-                    match (value.is_block(), tag) {
+                    let tag = if !is_block { value.i32_val() as u8 } else { #tag };
+                    match (is_block, tag) {
                         #(#body),*
                         _ => panic!("ocaml ffi: received unknown variant while trying to convert ocaml structure/enum to rust"),
                     }
