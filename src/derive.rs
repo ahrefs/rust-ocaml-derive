@@ -67,7 +67,7 @@ pub fn tovalue_derive(s: synstructure::Structure) -> proc_macro2::TokenStream {
             panic!("ocaml cannot derive unboxed or float arrays for enums")
         }
         if arity == 0 {
-            quote!(ocaml::Value::i64(#tag as i64))
+            quote!(value = ocaml::Value::i64(#tag as i64);)
         } else if attrs.floats {
             let mut idx = 0usize;
             let init = quote!(
