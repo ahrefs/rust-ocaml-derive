@@ -66,7 +66,9 @@ pub fn tovalue_derive(s: synstructure::Structure) -> proc_macro2::TokenStream {
         if (attrs.floats || attrs.unboxed) && !is_record_like {
             panic!("ocaml cannot derive unboxed or float arrays for enums")
         }
-        if attrs.floats {
+        if arity == 0 {
+            quote!(ocaml::Value::i64(tag as i64))
+        } else if attrs.floats {
             let mut idx = 0usize;
             let init = quote!(
                 value = ocaml::Value::alloc(#arity, ocaml::Tag::DoubleArray);
@@ -187,7 +189,8 @@ pub fn fromvalue_derive(s: synstructure::Structure) -> proc_macro2::TokenStream 
             extern crate ocaml;
             gen impl ocaml::FromValue for @Self {
                 fn from_value(value: ocaml::Value) -> Self {
-                    let tag = #tag;
+                    let is_block = value.is_block();
+                    let tag = if is_block { value.i32_val() as u8 } else { #tag };
                     match (value.is_block(), tag) {
                         #(#body),*
                         _ => panic!("ocaml ffi: received unknown variant while trying to convert ocaml structure/enum to rust"),
