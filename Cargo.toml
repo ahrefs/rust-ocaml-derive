@@ -7,6 +7,13 @@ description = """
 Custom derive and procedural macros for easy FFI with ocaml on top of the ocaml crate
 """
 
+categories = [ "external-ffi-bindings" ]
+keywords = [ "ocaml", "ffi", "derive" ]
+readme = "README.md"
+repository = "https://github.com/ahrefs/rust-ocaml-derive"
+homepage = "https://github.com/ahrefs/rust-ocaml-derive"
+
+
 [lib]
 proc-macro = true
 
