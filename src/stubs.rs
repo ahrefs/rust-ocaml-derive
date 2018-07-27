@@ -98,6 +98,7 @@ pub fn ocaml(_attribute: TokenStream, function: TokenStream) -> TokenStream {
         let inputs = inputs.clone();
         // Generate an internal function so that ? and return properly works
         quote!(
+            #[inline(always)]
             fn internal( #(#inputs), * ) #rust_ty {
                 #block
             }
