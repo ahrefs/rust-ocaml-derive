@@ -4,10 +4,10 @@
  (deps (source_tree .))
  (targets libexample_stubs.a)
  (action (progn
-          (run cargo +nightly build --release)
-          (copy target/release/libexample.a libexample_stubs.a))))
+          (run cargo build -Z unstable-options --out-dir . --target-dir ../rust --release)
+          )))
 
-(library  
+(library
    (name stubs)
    (modules stubs)
    (self_build_stubs_archive (example))
@@ -15,7 +15,7 @@
    )
 
 (executable
-  
+
    (name main)
    (modules main)
    (libraries stubs)

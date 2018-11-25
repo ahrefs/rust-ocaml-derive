@@ -1,4 +1,5 @@
 #![feature(proc_macro)]
+
 #[macro_use]
 extern crate derive_ocaml;
 #[macro_use]
