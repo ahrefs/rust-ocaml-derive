@@ -1,5 +1,3 @@
-#![cfg_attr(feature = "stubs", feature(proc_macro))]
-
 extern crate quote;
 #[cfg(feature = "stubs")]
 extern crate proc_macro;
