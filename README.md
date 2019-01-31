@@ -5,7 +5,7 @@
 derive-ocaml is based on top of [ocaml-rs](https://github.com/zshipko/ocaml-rs) and adds a custom derive macro for `FromValue` and `ToValue`.
 The macro supports structs, enums, and unboxed float records.
 
-On top of that it implemens a nightly only procesdural macro `ocaml-ffi` to ease the boilerplate of writing stubs functions.
+On top of that it implements a nightly only procedural macro `ocaml-ffi` to ease the boilerplate of writing stubs functions.
 
 
 ```
