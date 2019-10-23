@@ -105,7 +105,7 @@ pub fn tovalue_derive(s: synstructure::Structure) -> proc_macro2::TokenStream {
         gen impl ocaml::ToValue for @Self {
             fn to_value(&self) -> ocaml::Value {
                 unsafe {
-                    caml_body!{ | |, <value>, {
+                    ::ocaml::caml_body!{ | |, <value>, {
                         match *self {
                              #(#body),*
                         }
