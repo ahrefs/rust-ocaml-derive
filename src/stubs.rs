@@ -107,7 +107,7 @@ pub fn ocaml(_attribute: TokenStream, function: TokenStream) -> TokenStream {
     let body = if returns {
         quote!(
             #rust_code
-            caml_body!{ | #(#params), * |, <return_value>, {
+            ::ocaml::caml_body!{ | #(#params), * |, <return_value>, {
                 let rust_val = internal(#(#arguments),*);
                 return_value = ::ocaml::ToValue::to_value(&rust_val);
             }
@@ -117,7 +117,7 @@ pub fn ocaml(_attribute: TokenStream, function: TokenStream) -> TokenStream {
     } else {
         quote!(
             #rust_code
-            caml_body!{ | #(#params), * |, @code {
+            ::ocaml::caml_body!{ | #(#params), * |, @code {
                 internal(#(#arguments),*);
             }};
             return
