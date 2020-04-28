@@ -1,6 +1,6 @@
-use synstructure;
 use proc_macro2;
 use syn;
+use synstructure;
 
 #[derive(Default)]
 struct Attrs {
@@ -10,36 +10,31 @@ struct Attrs {
 
 fn variant_attrs(attrs: &[syn::Attribute]) -> Attrs {
     fn is_ocaml(path: &syn::Path) -> bool {
-        path.segments.len() == 1
-            && path
-                .segments
-                .iter()
-                .next()
-                .map_or(false, |segment| segment.ident == "ocaml")
+        path.is_ident("ocaml")
     }
     attrs
         .iter()
         .find(|attr| is_ocaml(&attr.path))
         .map_or(Default::default(), |attr| {
-            if let Some(syn::Meta::List(ref list)) = attr.interpret_meta() {
+            if let Ok(syn::Meta::List(ref list)) = attr.parse_meta() {
                 list.nested
                     .iter()
                     .fold(Default::default(), |mut acc, meta| match meta {
-                        syn::NestedMeta::Meta(syn::Meta::Word(ref ident)) =>
-                                if ident == "unboxed" {
-                                    if acc.floats {
-                                        panic!("in ocaml attrs a variant cannot be both float array and unboxed")
-                                    }
-                                    acc.unboxed = true;
-                                    acc
-                                } else if ident == "floats_array" {
-                                    if acc.unboxed {
-                                        panic!("in ocaml attrs a variant cannot be both float array and unboxed")
-                                    }
-                                    acc.floats = true;
-                                    acc
+                        syn::NestedMeta::Meta(syn::Meta::Path(ref ident)) =>
+                            if ident.is_ident("unboxed") {
+                                if acc.floats {
+                                    panic!("in ocaml attrs a variant cannot be both float array and unboxed")
+                                }
+                                acc.unboxed = true;
+                                acc
+                            } else if ident.is_ident("floats_array") {
+                                if acc.unboxed {
+                                    panic!("in ocaml attrs a variant cannot be both float array and unboxed")
+                                }
+                                acc.floats = true;
+                                acc
                             } else {
-                                panic!("unexpected ocaml attribute parameter {}", ident)
+                                panic!("unexpected ocaml attribute parameter {:?}", *ident)
                             },
                      _ => panic!("unexpected ocaml attribute parameter"),
                     })
@@ -62,7 +57,7 @@ pub fn tovalue_derive(s: synstructure::Structure) -> proc_macro2::TokenStream {
         };
         let tag = *tag_ref;
         *tag_ref += 1;
-        let attrs = variant_attrs(&variant.ast().attrs);
+        let attrs = variant_attrs(variant.ast().attrs);
         if (attrs.floats || attrs.unboxed) && !is_record_like {
             panic!("ocaml cannot derive unboxed or float arrays for enums")
         }
@@ -90,9 +85,9 @@ pub fn tovalue_derive(s: synstructure::Structure) -> proc_macro2::TokenStream {
                 .into_iter()
                 .map(|idx| quote!(value.store_field(#idx, ocaml::value::UNIT)));
             let init = quote!(
-                value = ocaml::Value::alloc(#arity, ocaml::Tag::new(#tag));
-                #(#ghost);*;
-                );
+            value = ocaml::Value::alloc(#arity, ocaml::Tag::new(#tag));
+            #(#ghost);*;
+            );
             variant.fold(init, |acc, b| {
                 let i = idx;
                 idx += 1;
@@ -179,12 +174,12 @@ pub fn fromvalue_derive(s: synstructure::Structure) -> proc_macro2::TokenStream 
                 ),
             })
         } else {
-            quote!( {
+            quote!({
                 if value.tag() != ocaml::Tag::DoubleArray {
                     panic!("ocaml ffi: trying to convert a value which is not a double array to an unboxed record")
                 };
                 0
-                })
+            })
         };
         s.gen_impl(quote! {
             extern crate ocaml;
@@ -201,4 +196,3 @@ pub fn fromvalue_derive(s: synstructure::Structure) -> proc_macro2::TokenStream 
         })
     }
 }
-

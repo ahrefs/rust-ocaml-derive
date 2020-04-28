@@ -4,13 +4,14 @@
  (deps (source_tree .))
  (targets libexample_stubs.a)
  (action (progn
-          (run cargo build -Z unstable-options --out-dir . --target-dir ../rust --release)
+          (system "cd .. && cargo build --release")
+          (system "cp ../../target/release/libexample_stubs.a .")
           )))
 
 (library
    (name stubs)
    (modules stubs)
-   (self_build_stubs_archive (example))
+   (foreign_archives example_stubs)
    (c_library_flags         (-lpthread -lc -lm))
    )
 
