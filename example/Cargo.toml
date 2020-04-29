@@ -4,8 +4,11 @@ version = "0.1.0"
 authors = ["joris giovannangeli <joris.giovannangeli@ahrefs.com>"]
 
 [dependencies]
-derive-ocaml = { version = "0.1.1", features= ["stubs", "derive"] }
-ocaml = "*"
+ocaml = "0.5.1"
+
+[dependencies.derive-ocaml]
+path = ".."
+features = ["stubs", "derive"]
 
 [lib]
 crate-type = ["staticlib"]
