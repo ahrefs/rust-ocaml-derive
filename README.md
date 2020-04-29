@@ -2,8 +2,6 @@
 
 *WARNING* this crate is very experimental
 
-*NOTE* this crate targets ocaml-rs 0.5.1
-
 derive-ocaml is based on top of [ocaml-rs](https://github.com/zshipko/ocaml-rs) and adds a custom derive macro for `FromValue` and `ToValue`.
 The macro supports structs, enums, and unboxed float records.
 
@@ -25,4 +23,4 @@ pub fn rust_add_vecs(l: Vec3, r: Vec3) -> Vec3 {
 }
 ```
 
-see `example/src/lib.rs` and `example/src/stubs.ml` for example
+see `src/example/src/lib.rs` and `src/example/src/stubs.ml` for example

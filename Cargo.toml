@@ -27,13 +27,7 @@ derive = [ "synstructure" ]
 stubs = ["syn/full"]
 
 [dependencies]
-quote = "1.0"
-proc-macro2 = "1.0"
-
-[dependencies.syn]
-version = "1.0"
-features = ["extra-traits"]
-
-[dependencies.synstructure]
-version = "0.12"
-optional = true
+synstructure = { version = "0.10", optional = true }
+syn = "0.15"
+quote = "0.6"
+proc-macro2 = "0.4"
