@@ -1,3 +1,5 @@
+#![feature(proc_macro)]
+
 #[macro_use]
 extern crate derive_ocaml;
 #[macro_use]
@@ -47,9 +49,4 @@ pub fn rust_sum_vecs(vectors: Unrolled<Vec3>, max_items: Bound) -> Vec3 {
         One(vec) => vec,
         Many(vectors) => vectors.into_iter().take(max_items.0).fold(Default::default(), Vec3::add),
     }
-}
-
-#[ocaml_ffi(ffi_exn="rust-ffi")]
-pub fn test_panic() {
-    panic!("Oh No!")
 }
