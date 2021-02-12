@@ -1,6 +1,6 @@
-use synstructure;
 use proc_macro2;
 use syn;
+use synstructure;
 
 #[derive(Default)]
 struct Attrs {
@@ -21,25 +21,25 @@ fn variant_attrs(attrs: &[syn::Attribute]) -> Attrs {
         .iter()
         .find(|attr| is_ocaml(&attr.path))
         .map_or(Default::default(), |attr| {
-            if let Some(syn::Meta::List(ref list)) = attr.interpret_meta() {
+            if let Ok(syn::Meta::List(ref list)) = attr.parse_meta() {
                 list.nested
                     .iter()
                     .fold(Default::default(), |mut acc, meta| match meta {
-                        syn::NestedMeta::Meta(syn::Meta::Word(ref ident)) =>
-                                if ident == "unboxed" {
+                        syn::NestedMeta::Meta(syn::Meta::Path(ref ident)) =>
+                                if ident.is_ident("unboxed") {
                                     if acc.floats {
                                         panic!("in ocaml attrs a variant cannot be both float array and unboxed")
                                     }
                                     acc.unboxed = true;
                                     acc
-                                } else if ident == "floats_array" {
+                                } else if ident.is_ident("floats_array") {
                                     if acc.unboxed {
                                         panic!("in ocaml attrs a variant cannot be both float array and unboxed")
                                     }
                                     acc.floats = true;
                                     acc
                             } else {
-                                panic!("unexpected ocaml attribute parameter {}", ident)
+                                panic!("unexpected ocaml attribute parameter {:?}", ident)
                             },
                      _ => panic!("unexpected ocaml attribute parameter"),
                     })
@@ -102,7 +102,7 @@ pub fn tovalue_derive(s: synstructure::Structure) -> proc_macro2::TokenStream {
     });
     s.gen_impl(quote! {
         extern crate ocaml;
-        gen impl ocaml::ToValue for @Self {
+        gen unsafe impl ocaml::ToValue for @Self {
             fn to_value(&self) -> ocaml::Value {
                 unsafe {
                     ::ocaml::caml_body!{ | |, <value>, {
@@ -163,8 +163,8 @@ pub fn fromvalue_derive(s: synstructure::Structure) -> proc_macro2::TokenStream 
     if attrs.unboxed {
         s.gen_impl(quote! {
             extern crate ocaml;
-            gen impl ocaml::FromValue for @Self {
-                fn from_value(value: ocaml::Value) -> Self {
+            gen unsafe impl ocaml::FromValue for @Self {
+                fn fromm_value(value: ocaml::Value) -> Self {
                     #(#body),*
                 }
             }
@@ -179,16 +179,16 @@ pub fn fromvalue_derive(s: synstructure::Structure) -> proc_macro2::TokenStream 
                 ),
             })
         } else {
-            quote!( {
+            quote!({
                 if value.tag() != ocaml::Tag::DoubleArray {
                     panic!("ocaml ffi: trying to convert a value which is not a double array to an unboxed record")
                 };
                 0
-                })
+            })
         };
         s.gen_impl(quote! {
             extern crate ocaml;
-            gen impl ocaml::FromValue for @Self {
+            gen unsafe impl ocaml::FromValue for @Self {
                 fn from_value(value: ocaml::Value) -> Self {
                     let is_block = value.is_block();
                     let tag = if !is_block { value.i32_val() as u8 } else { #tag };
@@ -201,4 +201,3 @@ pub fn fromvalue_derive(s: synstructure::Structure) -> proc_macro2::TokenStream 
         })
     }
 }
-
