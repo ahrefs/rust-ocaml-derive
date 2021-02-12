@@ -23,7 +23,6 @@ default = [ "derive" ]
 # Implement custom derive for FromValue/ToValue ocaml traits
 derive = [ "synstructure" ]
 
-# Extperimental nightly only #[ocaml] proc_macro to generate all glue for a stub
 stubs = ["syn/full"]
 
 [dependencies]
